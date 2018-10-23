@@ -1,84 +1,146 @@
 package com.company;
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 public class Main {
 
-    public static class Interval {
-        int start;
-        int end;
-        Interval() { start = 0; end = 0; }
-        Interval(int s, int e) { start = s; end = e; }
+    public static double[][] readFile() throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("input.txt"), "UTF-8"));
+        String line = "";
+        String[] arrs = null;
+        arrs = br.readLine().split(" ");
+        int N = Integer.parseInt(arrs[0]);
+        assert(N > 0);
+        int row = 1;
+        double[][] matrix = new double[N + 2][N + 2];
+        for (int i = 0; i < N + 2; ++i)
+            matrix[0][i] = Double.MAX_VALUE;
+        while ((line = br.readLine()) != null) {
+            arrs = line.split(" ");
+            matrix[row][0] = Double.MAX_VALUE;
+            for (int i = 0; i < N; ++i)
+                matrix[row][i + 1] = Double.parseDouble(arrs[i]);
+            matrix[row][N + 1] = Double.MAX_VALUE;
+            ++row;
+         }
+        for (int i = 0; i < N + 2; ++i)
+            matrix[row][i] = Double.MAX_VALUE;
+         br.close();
+        return matrix;
     }
 
-    public static List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-        intervals.sort((a, b) -> Integer.compare(a.start, b.start));
-        return intervals;
-    }
-
-    // ret.add((List<Integer>) (Arrays.asList(nums[i], nums[j], nums[k], nums[l])));
-    //Character.isUpperCase(word.charAt(i))
-
-    public static boolean detectCapitalUse(String word) {
-        if (word.length() == 1)
+    public static boolean isLocalMinimum(double[][] matrix, int x, int y){
+        if (matrix[x][y] < matrix[x + 1][y] && matrix[x][y] < matrix[x - 1][y]
+                && matrix[x][y] < matrix[x][y + 1] && matrix[x][y] < matrix[x][y - 1]){
             return true;
-        boolean firstBig = false;
-        boolean firstTwo = false;
-        for (int i = 0; i < word.toCharArray().length; ++i){
-            if (i == 0){
-                if (Character.isUpperCase(word.charAt(i)))
-                    firstBig = true;
-            }
-            else if (i == 1){
-                if (firstBig == true && Character.isLowerCase(word.charAt(i)))
-                    firstTwo = true;
-                if (firstBig == false && Character.isUpperCase(word.charAt(i)))
-                    return false;
-            }
-            else{
-                if (firstTwo == true && Character.isUpperCase(word.charAt(i)))
-                    return false;
-                if (firstBig == true && firstTwo == false && Character.isLowerCase(word.charAt(i)))
-                    return false;
-                if(firstBig == false && Character.isUpperCase(word.charAt(i)))
-                    return false;
+        }
+        else
+            return false;
+    }
+
+    public static double getLocalMinimum( double[][] matrix, int left, int right, int top, int bottom){
+        assert(left <= right);
+        assert(top <= bottom);
+        int col_mid = (right + left) / 2;
+        int row_mid = (bottom + top) / 2;
+        Double col_min = Double.MAX_VALUE;
+        Double row_min = Double.MAX_VALUE;
+        int col_min_index = -1;
+        int row_min_index = -1;
+        for (int i = top; i <= bottom; ++i){
+            if (matrix[i][col_mid] < col_min) {
+                col_min = matrix[i][col_mid];
+                col_min_index = i;
             }
         }
-        return true;
+        for (int i = left; i <= right; ++i){
+            if (matrix[row_mid][i] < row_min) {
+                row_min = matrix[row_mid][i];
+                row_min_index = i;
+            }
+        }
+        if (col_min <= row_min){
+            if (isLocalMinimum(matrix, col_min_index, col_mid)){
+                return matrix[col_min_index][col_mid];
+            }
+            int t = -1;
+            int b = -1;
+            int l = -1;
+            int r = -1;
+            if ( col_min_index <= row_mid){
+                t = top;
+                b = row_mid;
+            }
+            else{
+                t = row_mid + 1;
+                b = bottom;
+            }
+            if (matrix[col_min_index][col_mid - 1] <= matrix[col_min_index][col_mid + 1]){
+                l = left;
+                r = col_mid;
+            }
+            else{
+                l = col_mid + 1;
+                r = right;
+            }
+            return getLocalMinimum(matrix, l, r, t, b);
+        }
+        else{
+            if (isLocalMinimum(matrix, row_mid, row_min_index)){
+                return matrix[row_mid][row_min_index];
+            }
+            int t = -1;
+            int b = -1;
+            int l = -1;
+            int r = -1;
+            if ( row_min_index <= col_mid){
+                l = left;
+                r = col_mid;
+            }
+            else{
+                l = col_mid + 1;
+                r = right;
+            }
+            if (matrix[row_mid - 1][row_min_index] <= matrix[row_mid + 1][row_min_index]){
+                t = top;
+                b = row_mid;
+            }
+            else{
+                t = row_mid + 1;
+                b = bottom;
+            }
+            return getLocalMinimum(matrix, l, r, t, b);
+        }
     }
 
     public static void main(String[] args) {
-/*
-        char[][] array = new char[][]{
-                {'C','A','A'},
-                { 'A','A','A'},
-                {'B','C','D'}
-        };
-        */
-        int[][] array1 = new int[][]{
-                {1, 2, 3, 4},
-                {5, 6, 7, 8},
-                {9,10,11,12}
-        };
-
-        int[] array2 = new int[]{
-                1,2,2,1
-        };
-
-        int[] array3 = new int[]{
-                2,2
-        };
-
-        String[] strArray = new String[]{
-                "gin", "zen", "gig", "msg"
-        };
-        ArrayList<Interval> alist = new ArrayList<Interval>(){{
-            add(new Interval(1,2));
-            //add(new Interval(3,5));
-            add(new Interval(6,8));
-          //  add(new Interval(8,10));
-            //add(new Interval(12,16));
-        }};
-
-        System.out.println(detectCapitalUse("FUCKyou"));
+        try {
+            double[][] matrix = readFile();
+            int row = matrix.length;
+            int col = matrix[0].length;
+            System.out.println(getLocalMinimum(matrix, 1, col - 2, 1, row - 2));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
+
+//    public static class Interval {
+//        int start;
+//        int end;
+//        Interval() { start = 0; end = 0; }
+//        Interval(int s, int e) { start = s; end = e; }
+//    }
+//
+//    public static List<Interval> insert(List<Interval > intervals, Interval newInterval) {
+//        intervals.sort((a, b) -> Integer.compare(a.start, b.start));
+//        return intervals;
+//    }
+
+// ret.add((List<Integer>) (Arrays.asList(nums[i], nums[j], nums[k], nums[l])));
+//Character.isUpperCase(word.charAt(i))
+//String str = Integer.toString(N);
+//int ret = (int)Math.pow(4, str.length() - 1);
