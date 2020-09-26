@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 public class Main {
-
     public static double[][] readFile() throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("input.txt"), "UTF-8"));
         String line = "";
@@ -46,8 +45,8 @@ public class Main {
         assert(top <= bottom);
         int col_mid = (right + left) / 2;
         int row_mid = (bottom + top) / 2;
-        Double col_min = Double.MAX_VALUE;
-        Double row_min = Double.MAX_VALUE;
+        Double col_min = 1.1;
+        Double row_min = 1.1;
         int col_min_index = -1;
         int row_min_index = -1;
         for (int i = top; i <= bottom; ++i){
@@ -116,15 +115,59 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            double[][] matrix = readFile();
-            int row = matrix.length;
-            int col = matrix[0].length;
-            System.out.println(getLocalMinimum(matrix, 1, col - 2, 1, row - 2));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static int findJudge(int N, int[][] trust) {
+        HashMap<Integer,ArrayList<Integer>> map = new HashMap<Integer, ArrayList<Integer>>();
+        for(int i=0;i<trust.length;i++){
+            if(map.containsKey(trust[i][0])){
+                // map.set(trust[i],map.get(trust[i])+map.get(trust[i]));
+                map.get(trust[i][0]).add(trust[i][0]);
+            }
+            else{
+                ArrayList<Integer> arr = new ArrayList<>();
+                arr.add(trust[i][1]);
+                map.put(trust[i][0],arr);
+            }
         }
+
+        if(map.size() != N-1) return -1;
+        int[] flag = new int[N+1];
+        for(Map.Entry<Integer, ArrayList<Integer>> elem:map.entrySet()){
+            int key = (int)elem.getKey();
+            flag[key] = 1;
+        }
+        int judge = 0;
+        for(int i = 1;i<flag.length;i++){
+            if(flag[i]==0)  judge = i;
+        }
+
+        for(Map.Entry<Integer, ArrayList<Integer>> elem:map.entrySet()){
+            ArrayList<Integer> arr1 = elem.getValue();
+            boolean help = false;
+            for(int i=0;i<arr1.size();i++){
+                if(arr1.get(i)==judge){
+                    help = true;
+                    break;
+                }
+            }
+            if(!help) return -1;
+        }
+        return judge;
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println("good news");
+//        try {
+//            double[][] matrix = readFile();
+//            int row = matrix.length;
+//            int col = matrix[0].length;
+//            System.out.println(getLocalMinimum(matrix, 1, col - 2, 1, row - 2));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
+
     }
 }
 
