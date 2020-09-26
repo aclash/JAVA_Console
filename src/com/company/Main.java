@@ -154,9 +154,9 @@ public class Main {
         return judge;
     }
 
-
     public static void main(String[] args) {
         System.out.println("good news");
+        System.out.println("test submit 2222");
 //        try {
 //            double[][] matrix = readFile();
 //            int row = matrix.length;
@@ -165,9 +165,6 @@ public class Main {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
-
-
     }
 }
 
