@@ -157,7 +157,6 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("good news");
         System.out.println("test submit 2222");
-        System.out.println("test submit 3333");
 //        try {
 //            double[][] matrix = readFile();
 //            int row = matrix.length;
