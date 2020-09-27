@@ -155,9 +155,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        ///sub 3
-        //sub 1
-        //sub 2
 //        try {
 //            double[][] matrix = readFile();
 //            int row = matrix.length;
