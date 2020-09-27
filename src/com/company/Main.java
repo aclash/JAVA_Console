@@ -155,10 +155,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        //sub reborn 3
-        //sub reborn 2
-        //git aclash sub 1
-        //sub reborn 1
 //        try {
 //            double[][] matrix = readFile();
 //            int row = matrix.length;
