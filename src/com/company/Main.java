@@ -155,6 +155,14 @@ public class Main {
         //aclash111
     }
 
+    public static void zcreborn2{
+
+    }
+
+    public static void zcreborn1{
+
+    }
+
     public static void main(String[] args) {
 //        try {
 //            double[][] matrix = readFile();
